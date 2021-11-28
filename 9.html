@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Practice 9</title>
+	<style>
+body {
+	margin:15px;	
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+div.maincal {	
+	display: grid;
+	
+	grid-template-areas:
+	"seven eight nine divide clean"
+	"four five six multiply back"
+	"one two three minus equal"
+	"zero zero point plus equal";
+	
+	grid-gap:10px;
+	justify-items: center;	
+}
+
+.vis {
+	margin:0;
+	border: 5px lightskyblue solid;
+	width: 375px;
+	height: 365px;
+	padding: 15px;
+}
+
+div.outputt {
+	width: 362px;
+	height: 42px;
+	font-size: 30px;
+	border: 1px black solid;
+	padding-top: 12px;
+	padding-right: 10px;
+	display: grid;
+	justify-items: end;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+
+button {
+	text-align: center;
+	font-size: 30px;	
+	width: 65px;
+	height: 65px;
+}
+
+.highh {	
+	grid-area: equal;
+	height:100%;			
+}
+
+.long {
+	grid-area: zero;
+	width:100%;		
+}
+
+.newel {	
+	color: gray;			
+}
+
+p {
+	margin:0;
+}
+	</style>
+	
+</head>
+
+
+<body>
+
+<script>
+
+	let a = 0;
+	let b = 0;
+	let c = 0;
+	let sign = 0;
+	let signMD = 0;
+	let specsign = 0;
+	let chanch = 0;	
+	let textt = '';
+	let pressed = 0;
+	let amofz = 0;
+	let strofz = '.';
+	
+function write(lett){
+	
+	let obj = document.getElementById("out");
+	obj.innerHTML ='<p><span class = "newel">' + textt + '</span>' + lett + '</p>' ;
+}
+
+function calc(){
+			 
+	if (sign == 1) a+=b
+	else if (sign == 2)	a-=b
+		 		 
+	b = 0;
+	signMD = 0;	
+}
+
+function calcMD(){
+
+	if (signMD == 3) {
+		if (chanch != 0) b*=c 
+		else a*=c; 
+		c=0;
+	}
+	else if (signMD == 4) { 
+		if (chanch != 0) b/=c 
+		else a/=c;
+		c=0;
+	}
+		
+	specsign = 0;		
+	amofz = 0;
+	strofz = '.';
+}
+
+function findj(len,obj){
+
+	let j = 0;
+	let i = len-1;
+	while ( i>0 ) 
+	if ((obj.textContent[i] == '+') || (obj.textContent[i] == '-') || (obj.textContent[i] == '*') || (obj.textContent[i] == '/')) {j = i+1; i=0}
+	else i--;
+	return j;
+}
+
+
+function calculate(num){
+
+	let obj = document.getElementById("out");	
+	obj.style.color = "black";
+	
+	if (pressed != 1) {
+	
+		if (specsign == 0) {
+	
+			if ((signMD == 3 || signMD == 4) && num < 10) {
+				c = c *10 + num; 
+				write(c);
+				pressed = 0;
+			}	
+	 
+			else if ((sign == 1 || sign == 2) && num < 10) {
+				b = b *10 + num; 
+				chanch = 1;
+				write(b);
+				pressed = 0;
+			}
+	
+			else if (num < 10){ 
+				a = a *10 + num;  
+				if (obj.textContent == 0) obj.textContent = '';
+				write(a);
+				pressed = 0;
+			}
+	
+		}
+
+		else {
+		
+			let i = amofz;
+			if (num == 0) amofz++;		
+			for (i; i<amofz; i++) strofz+='0';
+	
+			if ((signMD == 3 || signMD == 4) && num < 10){
+				if (num!=0)	{c += num/(Math.pow(10,specsign)); write(c)}
+				else write(c+strofz);
+				specsign++; 
+				pressed = 0;				
+			}	
+	 
+			else if ((sign == 1 || sign == 2) && num < 10) {
+				if (num!=0) {b += num/(Math.pow(10,specsign)); write(b)}
+				else write(b+strofz);
+				specsign++;
+				chanch = 1; 
+				pressed = 0;				
+			}
+	
+			else if (num < 10){
+				if (num!=0) {a += num/(Math.pow(10,specsign)); write(a)}
+				else write(a+strofz);
+				specsign++; 
+				pressed = 0;				
+			}
+			
+		}
+		
+	}	
+	
+	if (num == 10) {
+	
+		calcMD();	
+		calc();
+		obj.textContent = a;
+		sign = 0;
+		pressed = 1;
+		chanch = 0;		
+	}
+		
+	if (num == 11) {
+		
+		if (pressed <= 1) {	
+		
+			calcMD();
+			calc();
+			sign = 1;
+			
+			textt = obj.textContent;
+			obj.innerHTML ='<p><span class = "newel">' + textt + '</span>' + '+</p>' ;		
+			textt = obj.textContent;
+		}
+		
+		pressed = 2;		
+	}
+	
+	if (num == 12) {
+	
+		if (pressed <= 1) {	
+		
+			calcMD();
+			calc();
+			sign = 2;
+			
+			textt = obj.textContent;
+			obj.innerHTML ='<p><span class = "newel">' + textt + '</span>' + '-</p>' ;		
+			textt = obj.textContent;
+		}
+		
+		pressed = 2;		
+	}
+	
+	if (num == 13){
+			
+		if (pressed <= 1) {
+			calcMD();
+			signMD = 3;
+				
+			textt = obj.textContent;
+			obj.innerHTML ='<p><span class = "newel">' + textt + '</span>' + '*</p>' ;		
+			textt = obj.textContent;
+		}
+		
+		pressed = 3;				
+	}
+	
+	if (num == 14) {
+				
+		if (pressed <= 1) {
+			calcMD();
+			signMD = 4;
+			
+			textt = obj.textContent;
+			obj.innerHTML ='<p><span class = "newel">' + textt + '</span>' + '/</p>' ;		
+			textt = obj.textContent;
+		}
+				
+		pressed = 4;
+	}
+		
+	if (num == 15) {
+	
+		if (pressed != 1) {
+	
+			let helpp = 0;
+			
+			if (specsign != 0) specsign--;		
+			
+			if (signMD == 3 || signMD == 4) {
+				c*=Math.pow(10,specsign); 
+				c /= 10; 
+				c = Math.trunc(c);  	
+				if (specsign != 0) helpp = (specsign-1) * (-1);
+				c*=Math.pow(10,helpp);		
+			}	
+	 
+			else if (sign == 1 || sign == 2) {
+				b*=Math.pow(10,specsign); 
+				b /= 10; 
+				b = Math.trunc(b); 		
+				if (specsign != 0) helpp = (specsign-1) * (-1);
+				b*=Math.pow(10,helpp);				
+			}
+	
+			else {
+				a*=Math.pow(10,specsign); 
+				a /= 10; 
+				a = Math.trunc(a); 	
+				if (specsign != 0) helpp = (specsign-1) * (-1);
+				a*=Math.pow(10,helpp);	
+			}
+		
+			len = obj.textContent.length;	
+			let x = '';
+			let j = findj(len,obj);
+		
+			for (j; j<len-1; j++) 
+			x += obj.textContent[j];
+	
+			write(x);				
+		}
+	}
+	
+	if (num == 16) {		
+	
+		a = 0;
+		b = 0;
+		c = 0;
+		sign = 0;
+		signMD = 0;
+		chanch = 0;
+		specsign = 0;
+		obj.textContent = '0';
+		textt = '';
+		pressed = 0;
+		amofz = 0;
+		strofz = '.';
+	}
+		
+	if (num == 17) {
+					 
+		if (pressed != 5) {
+		
+			specsign = 1;	 
+			pressed = 5;	 
+			len = obj.textContent.length;	
+			let x='';
+			let j = findj(len,obj);
+			
+			for (j; j<=len-1; j++) 
+			x += obj.textContent[j];
+	
+			x += '.'; 
+			write(x);	
+		}
+	}
+}
+
+</script>
+
+<div class = "vis">
+
+<div id = "out" class = "outputt">0</div>
+
+<div id = "n1" class = "maincal">
+
+<button class = " seven" onclick = "calculate(7)">7</button>
+<button class = " eight" onclick = "calculate(8)">8</button>
+<button class = " nine" onclick = "calculate(9)">9</button>
+<button class = " divide" onclick = "calculate(14)">/</button>
+<button class = " clean" onclick = "calculate(16)">C</button>
+<button class = " four" onclick = "calculate(4)">4</button>
+<button class = " five" onclick = "calculate(5)">5</button>
+<button class = " six" onclick = "calculate(6)">6</button>
+<button class = " multiply" onclick = "calculate(13)">*</button>
+<button class = " back" onclick = "calculate(15)"> &lt;- </button>
+<button class = " one" onclick = "calculate(1)">1</button>
+<button class = " two" onclick = "calculate(2)">2</button>
+<button class = " three" onclick = "calculate(3)">3</button>
+<button class = "minus" onclick = "calculate(12)">-</button>
+<button class = "highh equal" onclick = "calculate(10)">=</button>
+<button class = "long zero" onclick = "calculate(0)">0</button>
+<button class = "point" onclick = "calculate(17)">.</button>
+<button class = "plus" onclick = "calculate(11)">+</button>
+
+</div>
+
+</div>
+
+</body>
+</html>
